@@ -1,0 +1,6 @@
+project/
+  data/
+  results/
+  shap/
+  scripts/
+  figures/

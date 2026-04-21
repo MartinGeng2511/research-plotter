@@ -1,0 +1,3 @@
+interface:
+  display_name: "Research Plotter"
+  short_description: "Generate paper figures from datasets, model results, SHAP artifacts, or plotting scripts."
