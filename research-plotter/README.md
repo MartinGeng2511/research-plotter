@@ -44,8 +44,8 @@ python scripts/detect_inputs.py project
 python scripts/raw_data_figures.py --project-root project
 python scripts/model_evaluation_figures.py --project-root project
 python scripts/pipeline_flowchart.py --project-root project
-python scripts/shap_dependence.py --project-root project
 python scripts/shap_advanced_summary.py --project-root project
+python scripts/shap_dependence.py --project-root project
 ```
 
 ## What each script expects
@@ -87,7 +87,19 @@ python scripts/pipeline_flowchart.py --project-root project
 python scripts/pipeline_flowchart.py --project-root project --spec-json path/to/spec.json
 ```
 
-### 4. SHAP dependence figures
+### 4. SHAP advanced summary figure (default SHAP analysis output)
+Input types:
+- SHAP values array (`.npy`)
+- feature-name metadata JSON
+- explanation matrix (`.csv`; `X_explain_subset` preferred over `X_explain`)
+
+Command:
+
+```bash
+python scripts/shap_advanced_summary.py --project-root project
+```
+
+### 5. SHAP dependence figures (supplementary)
 Input types:
 - SHAP values array (`.npy`)
 - feature-name metadata JSON
@@ -97,18 +109,6 @@ Command:
 
 ```bash
 python scripts/shap_dependence.py --project-root project
-```
-
-### 5. SHAP advanced summary figure
-Input types:
-- SHAP values array (`.npy`)
-- feature-name metadata JSON
-- explanation matrix (`.csv`)
-
-Command:
-
-```bash
-python scripts/shap_advanced_summary.py --project-root project
 ```
 
 ## Automatic detection behavior

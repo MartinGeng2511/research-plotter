@@ -72,11 +72,11 @@ python scripts/pipeline_flowchart.py --project-root project --spec-json project/
 - `boxes`: list of box objects with `x`, `y`, `w`, `h`, `label`, optional `fc`
 - `arrows`: list of `[x1, y1, x2, y2]`
 
-## 5. SHAP dependence figures
+## 5. SHAP advanced summary (default SHAP analysis figure)
 
 ```bash
-python scripts/shap_dependence.py --project-root project
-python scripts/shap_dependence.py --project-root project --top-k 20 --page-size 20
+python scripts/shap_advanced_summary.py --project-root project
+python scripts/shap_advanced_summary.py --project-root project --scheme viridis --max-display 25
 ```
 
 ### Required input types
@@ -84,11 +84,11 @@ python scripts/shap_dependence.py --project-root project --top-k 20 --page-size 
 - feature metadata `.json`
 - aligned explanation matrix `.csv`
 
-## 6. SHAP advanced summary
+## 6. SHAP dependence figures (supplementary)
 
 ```bash
-python scripts/shap_advanced_summary.py --project-root project
-python scripts/shap_advanced_summary.py --project-root project --scheme viridis --max-display 25
+python scripts/shap_dependence.py --project-root project
+python scripts/shap_dependence.py --project-root project --top-k 20 --page-size 20
 ```
 
 ### Required input types

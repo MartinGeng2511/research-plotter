@@ -65,16 +65,18 @@ One of:
 
 ## 4. SHAP figures
 
+The **advanced composite figure** is the default SHAP analysis output; dependence plots are supplementary.
+
 ### Typical requests
-- "Generate dependence plots"
-- "Make SHAP summary figures"
+- "Generate SHAP analysis figures"
 - "Create a combined SHAP figure"
+- "Generate dependence plots" (supplementary)
 
 ### Required input types
 Core set:
 - SHAP values array
 - feature-name mapping or ordered feature list
-- explanation matrix for the corresponding rows and columns
+- explanation matrix for the corresponding rows and columns (`X_explain_subset.csv` preferred, `X_explain.csv` fallback; must contain every feature column and have exactly as many rows as the SHAP array)
 
 ### Compatibility signals
 - `.npy` file containing SHAP values
@@ -83,19 +85,16 @@ Core set:
 
 ### Subfigure requirements
 
-#### Dependence plots
-- SHAP values array
-- feature list
-- explanation matrix
-
-#### Beeswarm summary plot
+#### Advanced composite SHAP figure (default)
 - SHAP values array
 - explanation matrix
 - feature names
-
-#### Advanced composite SHAP figure
-- same as beeswarm summary plot
 - enough features to rank and visualize importance distribution
+
+#### Dependence plots (supplementary)
+- SHAP values array
+- feature list
+- explanation matrix
 
 ## 5. Existing-script execution
 

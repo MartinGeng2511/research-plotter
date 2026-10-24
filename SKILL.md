@@ -15,7 +15,7 @@ Create publication-quality figures for research projects from uploaded tabular d
    - **Raw data figures**: distributions, correlation matrices, feature-target relationships, categorical effects, outlier figures.
    - **Model evaluation figures**: per-model Train/Test parity JointGrid figures and an all-models comparison panel.
    - **Pipeline or flowchart figures**: model workflow diagrams or method diagrams.
-   - **SHAP figures**: dependence plots, beeswarm summary plots, composite SHAP layouts.
+   - **SHAP figures**: the advanced composite figure is the default SHAP analysis output; dependence plots are supplementary.
    - **Existing-script execution**: the user uploaded a plotting script and expects it to run with minimal edits.
 
 2. Determine the input mode.
@@ -82,11 +82,12 @@ Use when the user asks for a workflow diagram or uploads a model-pipeline script
 
 Use when the user provides SHAP values plus feature metadata and the corresponding explanation matrix.
 
-Default outputs may include:
+Default output:
+- **advanced composite figure** (`shap_advanced_summary.py`): inverted mean-|SHAP| importance bars + centered feature names + relative-contribution ring inset + beeswarm dot plot, framed by "Mean |SHAP Value|" and "Feature Value" colorbars — saved as `<model_tag>_triple_combined_v1.png/svg`
+
+Supplementary outputs (on request or when dependence detail is needed):
 - top-k dependence plots
 - paginated dependence plots for all features
-- beeswarm summary plot
-- advanced composite layout combining importance bars, beeswarm, and contribution inset
 
 ## Existing-script execution workflow
 
@@ -121,8 +122,8 @@ python scripts/detect_inputs.py project
 python scripts/raw_data_figures.py --project-root project
 python scripts/model_evaluation_figures.py --project-root project
 python scripts/pipeline_flowchart.py --project-root project
-python scripts/shap_dependence.py --project-root project
 python scripts/shap_advanced_summary.py --project-root project
+python scripts/shap_dependence.py --project-root project
 ```
 
 Read `references/script-entrypoints.md` when you need the full CLI options and the matching input-type rules for each entrypoint.
@@ -173,5 +174,5 @@ Provide both languages.
 - `scripts/raw_data_figures.py`: build high-fidelity raw-data figures matching the reference pastel white-background style.
 - `scripts/model_evaluation_figures.py`: build high-fidelity Train/Test parity JointGrid figures matching the reference CO2-style layout.
 - `scripts/pipeline_flowchart.py`: build a high-fidelity pipeline flowchart matching the reference XGB-Optuna style.
-- `scripts/shap_dependence.py`: build high-fidelity top-k and paginated SHAP dependence figures matching the reference layout.
-- `scripts/shap_advanced_summary.py`: build a high-fidelity composite SHAP summary figure matching the reference layout.
+- `scripts/shap_advanced_summary.py`: build the default high-fidelity composite SHAP analysis figure matching the reference advanced layout.
+- `scripts/shap_dependence.py`: build high-fidelity top-k and paginated SHAP dependence figures matching the reference layout (supplementary).
