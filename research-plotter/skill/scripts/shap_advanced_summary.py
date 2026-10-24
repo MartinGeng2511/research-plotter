@@ -128,8 +128,24 @@ def save_triple_combined_plot(shap_values, X, display_names, model_tag, out_dir,
     ax_bar.set_xlabel("Mean|SHAP Value|", fontsize=13, fontweight="bold", labelpad=12, loc="center"); ax_bar.xaxis.label.set_fontname("Times New Roman")
     ax_bar.spines["top"].set_visible(False); ax_bar.spines["left"].set_visible(False); ax_bar.spines["bottom"].set_linewidth(2.2); ax_bar.spines["right"].set_linewidth(2.2); ax_bar.spines["bottom"].set_color("#333333"); ax_bar.spines["right"].set_color("#333333"); ax_bar.spines["right"].set_position(("data", 0)); ax_bar.grid(False)
     ax_bar.tick_params(axis="x", which="major", direction="in", length=7, width=1.6, labelsize=10, pad=5); ax_bar.xaxis.set_minor_locator(plt.matplotlib.ticker.AutoMinorLocator(5)); ax_bar.tick_params(axis="x", which="minor", direction="in", length=3.5, width=0.8); set_tnr(ax_bar)
+    val_labels = []
     for i, val in enumerate(sorted_vals):
-        ax_bar.text(val + xmax * 0.02, i, f"{val:.4f}", ha="right", va="center", fontsize=8, fontweight="bold", fontname="Times New Roman", color="#000000", clip_on=False)
+        val_labels.append(ax_bar.text(val + xmax * 0.02, i, f"{val:.4f}", ha="right", va="center", fontsize=8, fontweight="bold", fontname="Times New Roman", color="#000000", clip_on=False))
+    # keep the lower-left rose-inset corridor clear of bars and value labels:
+    # widen the axis range until nothing in the bottom ~45% of rows reaches it.
+    first_bottom_row = int(np.floor(num_vars * 0.55))
+    for _ in range(6):
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        axbb = ax_bar.get_window_extent(renderer)
+        left_occupied = min(
+            (lbl.get_window_extent(renderer).x0 - axbb.x0) / axbb.width
+            for lbl in val_labels[first_bottom_row:]
+        )
+        if left_occupied >= 0.47:
+            break
+        xmax = ax_bar.get_xlim()[0] * (1 - left_occupied) / 0.50
+        ax_bar.set_xlim(xmax, 0)
     bar_right_fig = bar_left + bar_width; feat_center_x = bar_right_fig + feat_label_width * 0.50
     for i, feat in enumerate(sorted_features):
         y_frac = 1.0 - (i - (-0.5)) / (num_vars - 0.5 - (-0.5)); y_fig = bottom_margin + y_frac * usable_h
