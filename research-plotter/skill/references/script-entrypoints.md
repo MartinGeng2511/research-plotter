@@ -44,6 +44,9 @@ python scripts/model_evaluation_figures.py \
   --target-name "Bond Strength" \
   --x-label "Experimental bond stress (MPa)" \
   --y-label "Predicted bond stress (MPa)"
+
+# defaults are dataset-agnostic: --target-name "Target",
+# --x-label "Experimental value", --y-label "Predicted value"
 ```
 
 ### Required input types

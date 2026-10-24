@@ -168,7 +168,7 @@ def main():
     ap.add_argument("--project-root", default=".")
     ap.add_argument("--scheme", default="viridis")
     ap.add_argument("--max-display", type=int, default=0)
-    ap.add_argument("--model-tag", default="Stacking")
+    ap.add_argument("--model-tag", default="Model")
     args = ap.parse_args()
     project_root = resolve_project_root(args.project_root)
     out_dir = ensure_figures_dir(project_root) / "shap_advanced_figures"

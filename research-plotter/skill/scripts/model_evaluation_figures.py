@@ -379,9 +379,9 @@ def main():
     ap.add_argument("--project-root", default=".")
     ap.add_argument("--train-file", help="train prediction CSV (Actual + Pred_<model> columns)")
     ap.add_argument("--test-file", help="test prediction CSV (Actual + Pred_<model> columns)")
-    ap.add_argument("--target-name", default="Bond Strength")
-    ap.add_argument("--x-label", default="Experimental bond stress (MPa)")
-    ap.add_argument("--y-label", default="Predicted bond stress (MPa)")
+    ap.add_argument("--target-name", default="Target")
+    ap.add_argument("--x-label", default="Experimental value")
+    ap.add_argument("--y-label", default="Predicted value")
     args = ap.parse_args()
 
     project_root = resolve_project_root(args.project_root)
