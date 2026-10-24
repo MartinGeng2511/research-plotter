@@ -13,7 +13,7 @@ Create publication-quality figures for research projects from uploaded tabular d
 
 1. Determine the request type.
    - **Raw data figures**: distributions, correlation matrices, feature-target relationships, categorical effects, outlier figures.
-   - **Model evaluation figures**: CV stability, bootstrap CI, Q-Q plots, residual diagnostics, prediction interval figures.
+   - **Model evaluation figures**: per-model Train/Test parity JointGrid figures and an all-models comparison panel.
    - **Pipeline or flowchart figures**: model workflow diagrams or method diagrams.
    - **SHAP figures**: dependence plots, beeswarm summary plots, composite SHAP layouts.
    - **Existing-script execution**: the user uploaded a plotting script and expects it to run with minimal edits.
@@ -68,13 +68,11 @@ See `references/input-requirements.md` for expected input types.
 
 ### Model evaluation figures
 
-Use when the user uploads prediction outputs, CV scores, bootstrap metrics, residual diagnostics, or interval results.
+Use when the user uploads train/test prediction tables (e.g. `enhanced_predictions_train.csv` + `enhanced_predictions_test.csv`) with an `Actual` column and `Pred_<model>` columns.
 
-Default outputs may include:
-- repeated CV stability figures
-- bootstrap confidence interval figures
-- Q-Q plot and normality diagnostics
-- prediction interval coverage figures
+Default outputs (JointGrid parity style):
+- one `JointGrid_<model>` figure per model: Train/Test scatter + 95% CI regression lines + x=y line + stacked marginal histograms + R² info boxes
+- one `JointGrid_AllModels` panel comparing every model side by side
 
 ### Pipeline or flowchart figures
 
@@ -173,7 +171,7 @@ Provide both languages.
 - `references/script-entrypoints.md`: direct execution guide for the bundled plotting scripts.
 - `scripts/detect_inputs.py`: scan a project directory and summarize detected input roles.
 - `scripts/raw_data_figures.py`: build high-fidelity raw-data figures matching the reference pastel white-background style.
-- `scripts/model_evaluation_figures.py`: build high-fidelity SCI-style model evaluation figures matching the reference layout.
+- `scripts/model_evaluation_figures.py`: build high-fidelity Train/Test parity JointGrid figures matching the reference CO2-style layout.
 - `scripts/pipeline_flowchart.py`: build a high-fidelity pipeline flowchart matching the reference XGB-Optuna style.
 - `scripts/shap_dependence.py`: build high-fidelity top-k and paginated SHAP dependence figures matching the reference layout.
 - `scripts/shap_advanced_summary.py`: build a high-fidelity composite SHAP summary figure matching the reference layout.

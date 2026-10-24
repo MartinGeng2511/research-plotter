@@ -14,7 +14,7 @@ import shap
 from matplotlib.colors import LinearSegmentedColormap
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-from plot_utils import ensure_2d_shap, ensure_figures_dir, find_shap_bundle, load_feature_names, read_table, resolve_project_root
+from plot_utils import ensure_2d_shap, ensure_figures_dir, find_shap_bundle, load_feature_names, resolve_project_root, select_explain_matrix
 
 warnings.filterwarnings("ignore")
 plt.rcParams["font.family"] = "Times New Roman"
@@ -158,11 +158,15 @@ def main():
     out_dir = ensure_figures_dir(project_root) / "shap_advanced_figures"
     out_dir.mkdir(parents=True, exist_ok=True)
     bundle = find_shap_bundle(project_root)
-    if not all(bundle.values()):
-        raise FileNotFoundError(f"Missing SHAP inputs: {[k for k, v in bundle.items() if not v]}")
+    required = {k: bundle[k] for k in ("shap_values", "feature_json")}
+    if not all(required.values()) or not bundle["x_candidates"]:
+        raise FileNotFoundError("Missing SHAP inputs: "
+                                + ", ".join(k for k, v in required.items() if not v)
+                                + (", explanation matrix" if not bundle["x_candidates"] else ""))
     feat_names = load_feature_names(bundle["feature_json"])
     shap_values = ensure_2d_shap(np.load(bundle["shap_values"], allow_pickle=True))
-    X = read_table(bundle["x_matrix"])[feat_names].to_numpy(dtype=float)
+    x_path, X_df = select_explain_matrix(bundle["x_candidates"], feat_names, shap_values.shape[0])
+    X = X_df[feat_names].to_numpy(dtype=float)
     display_names = [pretty_name(n) for n in feat_names]
     max_display = args.max_display if args.max_display and args.max_display > 0 else None
     png, svg = save_triple_combined_plot(shap_values, X, display_names, args.model_tag, out_dir, scheme_name=args.scheme, max_display=max_display)

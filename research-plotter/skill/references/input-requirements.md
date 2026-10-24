@@ -29,41 +29,23 @@ This reference explains which **input types** are needed for each figure family.
 
 ### Typical requests
 - "Draw model performance figures"
-- "Make CV, bootstrap, Q-Q, and prediction-interval plots"
+- "Make train-vs-test parity plots for my models"
 - "Generate publication figures from model results"
 
-### Input types by subfigure
+### Input types
 
-#### CV stability
-Required input type:
-- repeated CV scores or fold-wise scores with model identifier and metric values
-
-Compatibility signals:
-- columns like `Model`, `R2`, `RMSE`, `MAE`, `Fold`, `Repeat`
-
-#### Bootstrap confidence intervals
-Required input type:
-- bootstrap resampling results for a target metric
-
-Compatibility signals:
-- columns like `Model`, `R2`, `RMSE`, `MAE`, `Bootstrap`, `Iteration`
-
-#### Q-Q plot / residual diagnostics
-Required input type:
-- residual file with standardized or raw residuals
-
-Compatibility signals:
-- columns like `Residual`, `Standardized_Residual`, `Error`
-
-#### Prediction interval figure
+#### Per-model JointGrid + all-models panel
 Required input types:
-- actual values
-- predicted values
-- lower interval bound
-- upper interval bound
+- test prediction table (always needed)
+- train prediction table (needed for Train points and Train R²; the script degrades to test-only when absent)
 
 Compatibility signals:
-- columns like `Actual`, `Pred_*`, `Q5_*`, `Q95_*`, `Lower`, `Upper`, `In_PI_*`
+- columns like `Actual`, `Pred_<model>` (e.g. `Pred_XGB-Optuna`, `Pred_Boost-Avg`)
+- filenames like `enhanced_predictions_train.csv`, `enhanced_predictions_test.csv`
+- one `Pred_*` column per model; every such column produces one JointGrid and one panel in the combined figure
+
+Optional overrides:
+- `--target-name`, `--x-label`, `--y-label` for axis and info-box text
 
 ## 3. Pipeline or flowchart figures
 

@@ -28,28 +28,31 @@ python scripts/raw_data_figures.py --project-root project --dataset project/data
 - `Figure_4_CategoricalEffects` when compatible categorical variables exist
 - `Figure_S1_Outliers`
 
-## 3. Model-evaluation figures
+## 3. Model-evaluation figures (Train/Test parity JointGrid)
 
 ```bash
 python scripts/model_evaluation_figures.py --project-root project
 ```
 
-Optional explicit inputs:
+Optional explicit inputs and labels:
 
 ```bash
 python scripts/model_evaluation_figures.py \
   --project-root project \
-  --cv-file project/results/cv_scores.csv \
-  --bootstrap-file project/results/bootstrap_results.csv \
-  --residual-file project/results/residual_diagnostics.csv \
-  --prediction-file project/results/enhanced_predictions_test.csv
+  --train-file project/results/enhanced_predictions_train.csv \
+  --test-file project/results/enhanced_predictions_test.csv \
+  --target-name "Bond Strength" \
+  --x-label "Experimental bond stress (MPa)" \
+  --y-label "Predicted bond stress (MPa)"
 ```
 
-### Required input types by subfigure
-- CV stability: score table with `Model` and `R2`
-- bootstrap: table with `Model` and at least one metric such as `R2` or `RMSE`
-- Q-Q: residual table with `Standardized_Residual` or `Residual`
-- prediction interval: table with `Actual`, `Pred_*`, `Q5_*`, `Q95_*`
+### Required input types
+- test prediction table with `Actual` and one `Pred_<model>` column per model
+- train prediction table with the same schema (optional but recommended: adds Train points, Train regression line, and Train R²)
+
+### Outputs
+- `model_results/JointGrid_<model>.png/svg` per model
+- `model_results/JointGrid_AllModels.png/svg`
 
 ## 4. Pipeline flowchart
 
