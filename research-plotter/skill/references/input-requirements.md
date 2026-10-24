@@ -29,41 +29,23 @@ This reference explains which **input types** are needed for each figure family.
 
 ### Typical requests
 - "Draw model performance figures"
-- "Make CV, bootstrap, Q-Q, and prediction-interval plots"
+- "Make train-vs-test parity plots for my models"
 - "Generate publication figures from model results"
 
-### Input types by subfigure
+### Input types
 
-#### CV stability
-Required input type:
-- repeated CV scores or fold-wise scores with model identifier and metric values
-
-Compatibility signals:
-- columns like `Model`, `R2`, `RMSE`, `MAE`, `Fold`, `Repeat`
-
-#### Bootstrap confidence intervals
-Required input type:
-- bootstrap resampling results for a target metric
-
-Compatibility signals:
-- columns like `Model`, `R2`, `RMSE`, `MAE`, `Bootstrap`, `Iteration`
-
-#### Q-Q plot / residual diagnostics
-Required input type:
-- residual file with standardized or raw residuals
-
-Compatibility signals:
-- columns like `Residual`, `Standardized_Residual`, `Error`
-
-#### Prediction interval figure
+#### Per-model JointGrid + all-models panel
 Required input types:
-- actual values
-- predicted values
-- lower interval bound
-- upper interval bound
+- test prediction table (always needed)
+- train prediction table (needed for Train points and Train R²; the script degrades to test-only when absent)
 
 Compatibility signals:
-- columns like `Actual`, `Pred_*`, `Q5_*`, `Q95_*`, `Lower`, `Upper`, `In_PI_*`
+- columns like `Actual`, `Pred_<model>` (e.g. `Pred_XGB-Optuna`, `Pred_Boost-Avg`)
+- filenames like `enhanced_predictions_train.csv`, `enhanced_predictions_test.csv`
+- one `Pred_*` column per model; every such column produces one JointGrid and one panel in the combined figure
+
+Optional overrides:
+- `--target-name`, `--x-label`, `--y-label` for axis and info-box text
 
 ## 3. Pipeline or flowchart figures
 
@@ -83,16 +65,18 @@ One of:
 
 ## 4. SHAP figures
 
+The **advanced composite figure** is the default SHAP analysis output; dependence plots are supplementary.
+
 ### Typical requests
-- "Generate dependence plots"
-- "Make SHAP summary figures"
+- "Generate SHAP analysis figures"
 - "Create a combined SHAP figure"
+- "Generate dependence plots" (supplementary)
 
 ### Required input types
 Core set:
 - SHAP values array
 - feature-name mapping or ordered feature list
-- explanation matrix for the corresponding rows and columns
+- explanation matrix for the corresponding rows and columns (`X_explain_subset.csv` preferred, `X_explain.csv` fallback; must contain every feature column and have exactly as many rows as the SHAP array)
 
 ### Compatibility signals
 - `.npy` file containing SHAP values
@@ -101,19 +85,16 @@ Core set:
 
 ### Subfigure requirements
 
-#### Dependence plots
-- SHAP values array
-- feature list
-- explanation matrix
-
-#### Beeswarm summary plot
+#### Advanced composite SHAP figure (default)
 - SHAP values array
 - explanation matrix
 - feature names
-
-#### Advanced composite SHAP figure
-- same as beeswarm summary plot
 - enough features to rank and visualize importance distribution
+
+#### Dependence plots (supplementary)
+- SHAP values array
+- feature list
+- explanation matrix
 
 ## 5. Existing-script execution
 

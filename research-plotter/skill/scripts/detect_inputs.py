@@ -41,6 +41,18 @@ def classify_table(df):
     return roles
 
 
+def classify_path(path: Path):
+    name = path.name.lower()
+    roles = []
+    if "train" in name:
+        roles.append("prediction_train_candidate")
+    if "test" in name:
+        roles.append("prediction_test_candidate")
+    if "x_explain" in name or "explain" in name or path.stem.lower().startswith("x_"):
+        roles.append("explanation_matrix_candidate")
+    return roles
+
+
 def detect(root: Path):
     out = {
         "root": str(root.resolve()),
@@ -56,6 +68,7 @@ def detect(root: Path):
         rec = {"path": str(path.relative_to(root)), "suffix": path.suffix.lower(), "roles": []}
 
         if path.suffix.lower() in TABULAR_EXTS:
+            rec["roles"].extend(classify_path(path))
             df = safe_read_table(path)
             if df is not None:
                 rec["columns"] = [str(c) for c in df.columns[:12]]
@@ -74,12 +87,12 @@ def detect(root: Path):
     found = out["input_types_found"]
     if "tabular_dataset_candidate" in found:
         out["figure_families_feasible"].add("raw_data_figures")
-    if any(x in found for x in ["cv_or_bootstrap_metrics_candidate", "residual_diagnostics_candidate", "prediction_interval_candidate", "prediction_results_candidate"]):
+    if "prediction_results_candidate" in found:
         out["figure_families_feasible"].add("model_evaluation_figures")
     if "plotting_script_candidate" in found:
         out["figure_families_feasible"].add("existing_script_execution")
-        out["figure_families_feasible"].add("flowchart_figures")
-    if {"shap_values_candidate", "feature_metadata_candidate"}.issubset(found):
+    out["figure_families_feasible"].add("flowchart_figures")
+    if {"shap_values_candidate", "feature_metadata_candidate", "explanation_matrix_candidate"}.issubset(found):
         out["figure_families_feasible"].add("shap_figures")
 
     out["input_types_found"] = sorted(out["input_types_found"])

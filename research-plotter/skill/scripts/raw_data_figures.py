@@ -414,7 +414,10 @@ def build_main_fig3_relationships(df: pd.DataFrame, numeric_cols: list[str], tar
     df_num = df[numeric_cols].copy().apply(pd.to_numeric, errors='coerce')
     corr_with_target = df_num.corr()[target_col].drop(target_col).abs().sort_values(ascending=False)
     top_features = corr_with_target.head(4).index.tolist()
-    fig, axes = plt.subplots(2, 2, figsize=(13.8, 9.0), constrained_layout=True)
+    n_features = len(top_features)
+    ncols = 2
+    nrows = int(math.ceil(n_features / ncols))
+    fig, axes = plt.subplots(nrows, ncols, figsize=(13.8, max(7.0, 4.5 * nrows)), constrained_layout=True)
     axes = np.array(axes).reshape(-1)
     for i, feat in enumerate(top_features):
         plot_binned_box_relationship(axes[i], df_num[feat], df_num[target_col], feat, target_col, chr(ord("a") + i))
@@ -431,6 +434,7 @@ def build_main_fig4_categorical_effects(df: pd.DataFrame, categorical_cols: list
             continue
         cat_col = categorical_cols[idx]
         df_copy = df.copy()
+        df_copy = df_copy[df_copy[cat_col].astype(str).str.lower() != "missing"]
         stats = df_copy.groupby(cat_col)[target_col].agg(["median", "count"]).sort_values("median")
         order = stats.index.tolist()
         data = [df_copy.loc[df_copy[cat_col] == cat, target_col].dropna().values for cat in order]
@@ -454,7 +458,7 @@ def build_main_fig4_categorical_effects(df: pd.DataFrame, categorical_cols: list
         ax.set_ylabel(target_col)
         add_y_grid(ax, alpha=0.14)
         draw_arrow_spines(ax, left=True, bottom=False)
-        panel_heading(ax, chr(ord('a') + idx), f"Effect of {cat_col}")
+        panel_heading(ax, chr(ord('a') + idx), f"Effect of {cat_col.replace('_', ' ').lower()}")
     return save_figure(fig, out_dir, "Figure_4_CategoricalEffects", dpi=300)
 
 

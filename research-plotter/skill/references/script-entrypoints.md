@@ -28,28 +28,34 @@ python scripts/raw_data_figures.py --project-root project --dataset project/data
 - `Figure_4_CategoricalEffects` when compatible categorical variables exist
 - `Figure_S1_Outliers`
 
-## 3. Model-evaluation figures
+## 3. Model-evaluation figures (Train/Test parity JointGrid)
 
 ```bash
 python scripts/model_evaluation_figures.py --project-root project
 ```
 
-Optional explicit inputs:
+Optional explicit inputs and labels:
 
 ```bash
 python scripts/model_evaluation_figures.py \
   --project-root project \
-  --cv-file project/results/cv_scores.csv \
-  --bootstrap-file project/results/bootstrap_results.csv \
-  --residual-file project/results/residual_diagnostics.csv \
-  --prediction-file project/results/enhanced_predictions_test.csv
+  --train-file project/results/enhanced_predictions_train.csv \
+  --test-file project/results/enhanced_predictions_test.csv \
+  --target-name "Bond Strength" \
+  --x-label "Experimental bond stress (MPa)" \
+  --y-label "Predicted bond stress (MPa)"
+
+# defaults are dataset-agnostic: --target-name "Target",
+# --x-label "Experimental value", --y-label "Predicted value"
 ```
 
-### Required input types by subfigure
-- CV stability: score table with `Model` and `R2`
-- bootstrap: table with `Model` and at least one metric such as `R2` or `RMSE`
-- Q-Q: residual table with `Standardized_Residual` or `Residual`
-- prediction interval: table with `Actual`, `Pred_*`, `Q5_*`, `Q95_*`
+### Required input types
+- test prediction table with `Actual` and one `Pred_<model>` column per model
+- train prediction table with the same schema (optional but recommended: adds Train points, Train regression line, and Train R²)
+
+### Outputs
+- `model_results/JointGrid_<model>.png/svg` per model
+- `model_results/JointGrid_AllModels.png/svg`
 
 ## 4. Pipeline flowchart
 
@@ -69,11 +75,11 @@ python scripts/pipeline_flowchart.py --project-root project --spec-json project/
 - `boxes`: list of box objects with `x`, `y`, `w`, `h`, `label`, optional `fc`
 - `arrows`: list of `[x1, y1, x2, y2]`
 
-## 5. SHAP dependence figures
+## 5. SHAP advanced summary (default SHAP analysis figure)
 
 ```bash
-python scripts/shap_dependence.py --project-root project
-python scripts/shap_dependence.py --project-root project --top-k 20 --page-size 20
+python scripts/shap_advanced_summary.py --project-root project
+python scripts/shap_advanced_summary.py --project-root project --scheme viridis --max-display 25
 ```
 
 ### Required input types
@@ -81,11 +87,11 @@ python scripts/shap_dependence.py --project-root project --top-k 20 --page-size 
 - feature metadata `.json`
 - aligned explanation matrix `.csv`
 
-## 6. SHAP advanced summary
+## 6. SHAP dependence figures (supplementary)
 
 ```bash
-python scripts/shap_advanced_summary.py --project-root project
-python scripts/shap_advanced_summary.py --project-root project --scheme viridis --max-display 25
+python scripts/shap_dependence.py --project-root project
+python scripts/shap_dependence.py --project-root project --top-k 20 --page-size 20
 ```
 
 ### Required input types

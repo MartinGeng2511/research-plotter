@@ -13,7 +13,7 @@ import matplotlib.ticker as ticker
 import numpy as np
 import shap
 
-from plot_utils import ensure_2d_shap, ensure_figures_dir, find_shap_bundle, load_feature_names, read_table, resolve_project_root
+from plot_utils import ensure_2d_shap, ensure_figures_dir, find_shap_bundle, load_feature_names, resolve_project_root, select_explain_matrix
 
 warnings.filterwarnings("ignore")
 plt.rcParams.update({
@@ -118,11 +118,15 @@ def main():
     out_dir = ensure_figures_dir(project_root) / "dependence_figures"
     out_dir.mkdir(parents=True, exist_ok=True)
     bundle = find_shap_bundle(project_root)
-    if not all(bundle.values()):
-        raise FileNotFoundError(f"Missing SHAP inputs: {[k for k, v in bundle.items() if not v]}")
+    required = {k: bundle[k] for k in ("shap_values", "feature_json")}
+    if not all(required.values()) or not bundle["x_candidates"]:
+        raise FileNotFoundError("Missing SHAP inputs: "
+                                + ", ".join(k for k, v in required.items() if not v)
+                                + (", explanation matrix" if not bundle["x_candidates"] else ""))
     feat_names = load_feature_names(bundle["feature_json"])
     shap_values = ensure_2d_shap(np.load(bundle["shap_values"], allow_pickle=True))
-    X_df = read_table(bundle["x_matrix"])
+    x_path, X_df = select_explain_matrix(bundle["x_candidates"], feat_names, shap_values.shape[0])
+    bundle["x_matrix"] = x_path
     X = X_df[feat_names].to_numpy(dtype=float)
     mean_abs = np.mean(np.abs(shap_values), axis=0)
     sorted_idx = np.argsort(mean_abs)[::-1]
